@@ -12,7 +12,7 @@ const Dashboard = () => {
         const response = await fetch("https://data-visualization-dashboard-9g3b.onrender.com/data");
         const result = await response.json();
         if (result.data) {
-          setData(result.data);
+          setData(result.data.map(d => ({ ...d, Time: d.Time.toString() })));
         }
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -20,7 +20,7 @@ const Dashboard = () => {
     };
 
     fetchData();
-    const interval = setInterval(fetchData, 5000); // Fetch data every 5 seconds
+    const interval = setInterval(fetchData, 5000);
     return () => clearInterval(interval);
   }, []);
 
@@ -34,7 +34,7 @@ const Dashboard = () => {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="Time" />
+              <XAxis dataKey="Time" angle={-45} textAnchor="end" height={60} />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -50,7 +50,7 @@ const Dashboard = () => {
           <ResponsiveContainer width="100%" height="100%">
             <BarChart data={data} margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="Time" />
+              <XAxis dataKey="Time" angle={-45} textAnchor="end" height={60} />
               <YAxis />
               <Tooltip />
               <Legend />
@@ -66,8 +66,8 @@ const Dashboard = () => {
           <h3>Pie Chart</h3>
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
-              <Pie data={data} dataKey="Humidity" nameKey="Time" cx="50%" cy="50%" outerRadius={120} fill="#8884d8" label>
-                {data.map((entry, index) => (
+              <Pie data={data.slice(0, 5)} dataKey="Humidity" nameKey="Time" cx="50%" cy="50%" outerRadius={120} fill="#8884d8" label>
+                {data.slice(0, 5).map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
