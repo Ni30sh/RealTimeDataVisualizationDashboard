@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from "recharts";
 import axios from "axios";
 
-const SHEET_URL = "https://docs.google.com/spreadsheets/d/1L2rmaklLE-NFDdGNbQqkiHnJPCe08qguo2tEOX5oaNY/edit?usp=sharing"; // Replace with actual CSV link
+const SHEET_URL = "https://data-visualization-dashboard-9g3b.onrender.com/"; // Replace with actual CSV link
 
 export default function Dashboard() {
   const [data, setData] = useState([]);
