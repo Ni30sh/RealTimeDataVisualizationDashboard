@@ -7,7 +7,7 @@ from io import StringIO
 app = FastAPI()
 
 # Google Sheets CSV URL (Replace <unique-id> with actual ID)
-SHEET_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-<unique-id>/pub?output=csv"
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1L2rmaklLE-NFDdGNbQqkiHnJPCe08qguo2tEOX5oaNY/edit?usp=sharing"
 
 @app.get("/data")
 def fetch_data():
