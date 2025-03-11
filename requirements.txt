@@ -1,0 +1,4 @@
+fastapi
+uvicorn
+requests
+pandas  # (If you're using data processing)
