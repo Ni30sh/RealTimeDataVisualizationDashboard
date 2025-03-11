@@ -3,11 +3,12 @@ from fastapi.responses import JSONResponse
 import requests
 import csv
 from io import StringIO
+import pandas as pd
 
 app = FastAPI()
 
 # Google Sheets CSV URL (Replace <unique-id> with actual ID)
-SHEET_URL = "https://docs.google.com/spreadsheets/d/1L2rmaklLE-NFDdGNbQqkiHnJPCe08qguo2tEOX5oaNY/edit?usp=sharing"
+SHEET_URL = "https://docs.google.com/spreadsheets/d/1L2rmaklLE-NFDdGNbQqkiHnJPCe08qguo2tEOX5oaNY/export?format=csv"
 
 @app.get("/data")
 def fetch_data():
@@ -15,16 +16,18 @@ def fetch_data():
         response = requests.get(SHEET_URL)
         response.raise_for_status()
         
-        csv_data = StringIO(response.text)
-        reader = csv.reader(csv_data)
-        next(reader)  # Skip header row
+        # Read CSV data into a DataFrame
+        df = pd.read_csv(StringIO(response.text))
         
-        data = []
-        for row in reader:
-            if len(row) >= 2:
-                timestamp, value = row[0], row[1]
-                data.append({"timestamp": timestamp, "value": float(value)})
-        
-        return JSONResponse(content={"data": data[-10:]})  # Return last 10 data points
+        # Ensure numeric conversion for relevant columns
+        numeric_columns = ["Latitude", "Longitude", "Altitude", "PM2.5", "PM10", "Temperature", "Pressure", "Humidity", "Wind Speed"]
+        df[numeric_columns] = df[numeric_columns].apply(pd.to_numeric, errors="coerce")
+
+        # Drop NaN values if any column conversion failed
+        df = df.dropna()
+
+        # Convert dataframe to JSON format and return last 10 records
+        return JSONResponse(content={"data": df.to_dict(orient="records")[-10:]})
+    
     except Exception as e:
         return JSONResponse(content={"error": str(e)}, status_code=500)
